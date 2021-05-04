@@ -26,11 +26,11 @@ if (process.env.ENVIRONMENT == "production") {
   isProduction = true;
 }
 
-const { paths } = require("./config/gulp.paths");
+const { paths } = require("./configs/gulp.paths");
 const {
   tailwindConfigDev,
   tailwindConfigProd,
-} = require("./config/tailwind.config.js");
+} = require("./configs/tailwind.config.js");
 
 function cssTask() {
   return gulp
@@ -91,22 +91,17 @@ function browsersyncReload(cb) {
 
 function watchTask() {
   gulp.watch(
-    [
-      ...paths.styles.src,
-      ...paths.scripts.src,
-      ...paths.document.src,
-      ...paths.document.hbsSrc,
-    ],
-    gulp.series(
-      gulp.parallel(cssTask, jsTask, copyHtml),
-      gulp.parallel(cacheBustTask, cacheBustHbsTask),
-      browsersyncReload
-    )
+    [...paths.styles.src, ...paths.scripts.src, ...paths.document.src],
+    gulp.series(gulp.parallel(cssTask, jsTask, copyHtml), browsersyncReload)
   );
 }
 
 function browsersyncServe(cb) {
-  browsersync.init({});
+  browsersync.init({
+    server: {
+      baseDir: "./public",
+    },
+  });
   cb();
 }
 
